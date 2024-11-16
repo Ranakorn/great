@@ -129,25 +129,27 @@ styled_df = df4.style.set_table_styles(
     **{'text-align': 'center'}
 )
 
+# ตัวเลือกสำหรับการรีเฟรชข้อมูล
+refresh_rate = st.slider('Set Refresh Rate (seconds)', min_value=5, max_value=60, value=30)
+
 # การแบ่งคอลัมน์เพื่อแสดงกราฟและตาราง
 col1, col2 = st.columns(2)
 col3, col4 = st.columns(2)
 
-# แสดงกราฟ 2 เป็นกราฟแรก (ซ้ายบน)
-with col1:
-    st.plotly_chart(fig2, use_container_width=True, key="fig2")
+# ใช้ empty container สำหรับการรีเฟรชข้อมูล
+while True:
+    with col1:
+        st.plotly_chart(fig2, use_container_width=True, key="fig2")
 
-# แสดงกราฟ 1 ในตำแหน่งขวาบน
-with col2:
-    st.plotly_chart(fig1, use_container_width=True, key="fig1")
+    with col2:
+        st.plotly_chart(fig1, use_container_width=True, key="fig1")
 
-# แสดงกราฟ 3 ในตำแหน่งซ้ายล่าง
-with col3:
-    st.plotly_chart(fig3, use_container_width=True, key="fig3")
+    with col3:
+        st.plotly_chart(fig3, use_container_width=True, key="fig3")
 
-# แสดงตารางในตำแหน่งขวาล่าง
-with col4:
-    st.write("Region Distribution")
-    st.dataframe(styled_df)
+    with col4:
+        st.write("Region Distribution")
+        st.dataframe(styled_df)
 
-st.rerun()
+    time.sleep(refresh_rate)
+    st.rerun()  # รีเฟรชหน้าจอ
