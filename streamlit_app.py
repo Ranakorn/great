@@ -5,6 +5,9 @@ import streamlit as st
 from datetime import datetime
 import time
 
+# การตั้งค่าหน้าเว็บ Streamlit
+st.set_page_config(layout="wide")
+
 # การเชื่อมต่อกับฐานข้อมูล Pinot
 conn = connect(host='46.137.234.15', port=8099, path='/query/sql', schema='http')
 curs = conn.cursor()
@@ -33,7 +36,7 @@ fig1 = px.bar(df,
               title="Total Revenue by Food Type", 
               labels={'total_revenue': 'Total Revenue', 'food_type': 'Food Type'},
               color='food_type',  # แยกสีตามประเภทอาหาร
-              height=380, width=800)
+              height=400)
 
 # การ query ข้อมูลของเมนูและชั่วโมง
 curs.execute('''SELECT 
@@ -64,7 +67,7 @@ fig2 = px.bar(df2,
               labels={'page_views_count': 'Page Views Count', 'menu_name': 'Food Menu'},
               orientation='h',  # ใช้แท่งแนวนอน
               barmode='stack',  # สะสมสีของแต่ละประเภทอาหาร
-              height=380, width=800)
+              height=400)
 
 # การ query ข้อมูลจาก Users_2 สำหรับ gender
 curs.execute('''SELECT 
@@ -86,7 +89,7 @@ df3 = pd.DataFrame(tables3, columns=['gender', 'user_count'])
 fig3 = px.pie(df3, 
               names='gender', 
               values='user_count', 
-              hole=0.4,  # กำหนดขนาดของ hole เพื่อให้เป็นโดนัท
+              hole=0.3,  # กำหนดขนาดของ hole เพื่อให้เป็นโดนัท
               title="Gender Distribution")
 
 # การ query ข้อมูลจาก Users_2 สำหรับ region
