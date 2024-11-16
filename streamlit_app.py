@@ -35,9 +35,6 @@ fig1 = px.bar(df,
               color='food_type',  # แยกสีตามประเภทอาหาร
               height=400)
 
-# แสดงกราฟ
-st.plotly_chart(fig1, use_container_width=True, key="fig1")
-
 # การ query ข้อมูลของเมนูและชั่วโมง
 curs.execute('''SELECT 
     menu_name,
@@ -69,9 +66,6 @@ fig2 = px.bar(df2,
               barmode='stack',  # สะสมสีของแต่ละประเภทอาหาร
               height=400)
 
-# แสดงกราฟ
-st.plotly_chart(fig2, use_container_width=True, key="fig2")
-
 # การ query ข้อมูลจาก Users_2 สำหรับ gender
 curs.execute('''SELECT 
     gender,
@@ -94,9 +88,6 @@ fig3 = px.pie(df3,
               values='user_count', 
               hole=0.3,  # กำหนดขนาดของ hole เพื่อให้เป็นโดนัท
               title="Gender Distribution")
-
-# แสดงกราฟ
-st.plotly_chart(fig3, use_container_width=True, key="fig3")
 
 # การ query ข้อมูลจาก Users_2 สำหรับ region
 curs.execute('''SELECT 
@@ -135,8 +126,25 @@ styled_df = df4.style.set_table_styles(
     **{'text-align': 'center'}
 )
 
-# แสดงตารางที่ตกแต่ง
-st.write("Region Distribution")
-st.dataframe(styled_df)
+# การแบ่งคอลัมน์เพื่อแสดงกราฟและตาราง
+col1, col2 = st.columns(2)
+col3, col4 = st.columns(2)
+
+# แสดงกราฟ 2 เป็นกราฟแรก (ซ้ายบน)
+with col1:
+    st.plotly_chart(fig2, use_container_width=True, key="fig2")
+
+# แสดงกราฟ 1 ในตำแหน่งขวาบน
+with col2:
+    st.plotly_chart(fig1, use_container_width=True, key="fig1")
+
+# แสดงกราฟ 3 ในตำแหน่งซ้ายล่าง
+with col3:
+    st.plotly_chart(fig3, use_container_width=True, key="fig3")
+
+# แสดงตารางในตำแหน่งขวาล่าง
+with col4:
+    st.write("Region Distribution")
+    st.dataframe(styled_df)
 
 st.rerun()
