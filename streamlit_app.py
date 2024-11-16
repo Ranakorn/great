@@ -36,7 +36,7 @@ fig1 = px.bar(df,
               title="Total Revenue by Food Type", 
               labels={'total_revenue': 'Total Revenue', 'food_type': 'Food Type'},
               color='food_type',  # แยกสีตามประเภทอาหาร
-              height=400)
+              height=350)
 
 # การ query ข้อมูลของเมนูและชั่วโมง
 curs.execute('''SELECT 
@@ -67,7 +67,7 @@ fig2 = px.bar(df2,
               labels={'page_views_count': 'Page Views Count', 'menu_name': 'Food Menu'},
               orientation='h',  # ใช้แท่งแนวนอน
               barmode='stack',  # สะสมสีของแต่ละประเภทอาหาร
-              height=400)
+              height=350)
 
 # การ query ข้อมูลจาก Users_2 สำหรับ gender
 curs.execute('''SELECT 
@@ -130,7 +130,7 @@ styled_df = df4.style.set_table_styles(
 )
 
 # ตัวเลือกสำหรับการรีเฟรชข้อมูล
-refresh_rate = st.slider('Set Refresh Rate (seconds)', min_value=5, max_value=60, value=30)
+refresh_rate = st.slider('Set Refresh Rate (seconds)', min_value=1, max_value=60, value=5)
 
 # การแบ่งคอลัมน์เพื่อแสดงกราฟและตาราง
 col1, col2 = st.columns(2)
