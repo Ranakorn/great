@@ -6,9 +6,11 @@ import time
 
 # ตั้งค่าการรีเฟรช
 st.sidebar.header("Settings")
-refresh_interval = st.sidebar.slider("Refresh Interval (seconds)", 1, 60, 10)
+refresh_interval_sec = st.sidebar.slider("Refresh Interval (milliseconds)", 1, 60, 1)
+refresh_interval_ms = refresh_interval_sec  # ค่าในมิลลิวินาที
 
 # ฟังก์ชันดึงข้อมูล
+@st.cache_data(ttl=30)  # ใช้ cache_data เพื่อเก็บข้อมูลในระยะเวลา
 def fetch_data(query):
     conn = connect(host='46.137.234.15', port=8099, path='/query/sql', schema='http')
     curs = conn.cursor()
@@ -106,10 +108,10 @@ with col4:
         [
             {'selector': 'thead th', 'props': [('background-color', '#f2f2f2'), ('padding', '8px')]},
             {'selector': 'tbody td', 'props': [('padding', '8px')]},
-            {'selector': 'table', 'props': [('width', '100%')]}
+            {'selector': 'table', 'props': [('width', '100%')]},
         ]
     ).set_properties(**{'text-align': 'center'}))
 
 # การรีเฟรชหน้าเว็บอัตโนมัติ
-time.sleep(refresh_interval)
+time.sleep(refresh_interval_ms / 1000)  # แปลงมิลลิวินาทีเป็นวินาที
 st.rerun()
