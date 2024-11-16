@@ -9,75 +9,25 @@ import time
 st.set_page_config(layout="wide")
 
 # การเชื่อมต่อกับฐานข้อมูล Pinot
-@st.cache_data  # ใช้การแคชเพื่อไม่ให้ query ข้อมูลซ้ำ
-def get_data_from_pinot():
-    conn = connect(host='46.137.234.15', port=8099, path='/query/sql', schema='http')
-    curs = conn.cursor()
-    
-    # การ query ข้อมูล
-    curs.execute('''SELECT 
-        food_type, 
-        COUNT(*) AS total_orders, 
-        SUM(price) AS total_revenue
-    FROM 
-        Visit_food_3
-    GROUP BY 
-        food_type
-    ORDER BY 
-        total_revenue DESC;
-    ''')
-    tables = [row for row in curs.fetchall()]
-    
-    df = pd.DataFrame(tables, columns=['food_type', 'total_orders', 'total_revenue'])
-    
-    # การ query ข้อมูลของเมนูและชั่วโมง
-    curs.execute('''SELECT 
-        menu_name,
-        COUNT(userid) AS page_views_count,
-        FLOOR(viewtime / 3600) AS hour_of_day
-    FROM 
-        "Visit_food_3"
-    GROUP BY 
-        menu_name, hour_of_day
-    ''')
-    tables2 = [row for row in curs.fetchall()]
-    
-    df2 = pd.DataFrame(tables2, columns=['menu_name', 'page_views_count', 'hour_of_day'])
-    df2['formatted_viewtime'] = pd.to_datetime(df2['hour_of_day'], unit='h').dt.strftime('%d/%m/%Y %H:%M')
-    
-    # การ query ข้อมูลจาก Users_2 สำหรับ gender
-    curs.execute('''SELECT 
-        gender,
-        COUNT(userid) AS user_count
-    FROM 
-        "Users_2"
-    GROUP BY 
-        gender
-    ;''')
-    tables3 = [row for row in curs.fetchall()]
-    
-    df3 = pd.DataFrame(tables3, columns=['gender', 'user_count'])
-    
-    # การ query ข้อมูลจาก Users_2 สำหรับ region
-    curs.execute('''SELECT 
-        regionid,
-        COUNT(userid) AS region_count
-    FROM 
-        "Users_2"
-    GROUP BY 
-        regionid
-    ORDER BY 
-        region_count DESC
-    ;''')
-    tables4 = [row for row in curs.fetchall()]
-    
-    df4 = pd.DataFrame(tables4, columns=['Region ID', 'User Count'])
-    df4 = df4.reset_index(drop=True)
-    
-    return df, df2, df3, df4
+conn = connect(host='46.137.234.15', port=8099, path='/query/sql', schema='http')
+curs = conn.cursor()
 
-# ดึงข้อมูลจากฟังก์ชันที่แคช
-df, df2, df3, df4 = get_data_from_pinot()
+# การ query ข้อมูล
+curs.execute('''SELECT 
+    food_type, 
+    COUNT(*) AS total_orders, 
+    SUM(price) AS total_revenue
+FROM 
+    Visit_food_3
+GROUP BY 
+    food_type
+ORDER BY 
+    total_revenue DESC;
+''')
+tables = [row for row in curs.fetchall()]
+
+# สร้าง DataFrame
+df = pd.DataFrame(tables, columns=['food_type', 'total_orders', 'total_revenue'])
 
 # สร้างกราฟแท่งที่แสดง total_revenue โดยแยกสีตาม food_type
 fig1 = px.bar(df, 
@@ -87,6 +37,26 @@ fig1 = px.bar(df,
               labels={'total_revenue': 'Total Revenue', 'food_type': 'Food Type'},
               color='food_type',  # แยกสีตามประเภทอาหาร
               height=400)
+
+# การ query ข้อมูลของเมนูและชั่วโมง
+curs.execute('''SELECT 
+    menu_name,
+    COUNT(userid) AS page_views_count,
+    FLOOR(viewtime / 3600) AS hour_of_day
+FROM 
+    "Visit_food_3"
+GROUP BY 
+    menu_name, hour_of_day
+''')
+
+# รับข้อมูลจากผลลัพธ์ query
+tables2 = [row for row in curs.fetchall()]
+
+# สร้าง DataFrame
+df2 = pd.DataFrame(tables2, columns=['menu_name', 'page_views_count', 'hour_of_day'])
+
+# แปลง hour_of_day เป็นเวลาในรูปแบบ dd/MM/yyyy HH:mm
+df2['formatted_viewtime'] = pd.to_datetime(df2['hour_of_day'], unit='h').dt.strftime('%d/%m/%Y %H:%M')
 
 # สร้างกราฟแท่งแนวนอน (horizontal bar chart) และแสดงสะสม (stacked)
 fig2 = px.bar(df2, 
@@ -99,12 +69,49 @@ fig2 = px.bar(df2,
               barmode='stack',  # สะสมสีของแต่ละประเภทอาหาร
               height=400)
 
+# การ query ข้อมูลจาก Users_2 สำหรับ gender
+curs.execute('''SELECT 
+    gender,
+    COUNT(userid) AS user_count
+FROM 
+    "Users_2"
+GROUP BY 
+    gender
+;''')
+
+# รับข้อมูลจากผลลัพธ์ query
+tables3 = [row for row in curs.fetchall()]
+
+# สร้าง DataFrame จากผลลัพธ์ที่ได้
+df3 = pd.DataFrame(tables3, columns=['gender', 'user_count'])
+
 # สร้างกราฟโดนัท (pie chart with hole)
 fig3 = px.pie(df3, 
               names='gender', 
               values='user_count', 
               hole=0.3,  # กำหนดขนาดของ hole เพื่อให้เป็นโดนัท
               title="Gender Distribution")
+
+# การ query ข้อมูลจาก Users_2 สำหรับ region
+curs.execute('''SELECT 
+    regionid,
+    COUNT(userid) AS region_count
+FROM 
+    "Users_2"
+GROUP BY 
+    regionid
+ORDER BY 
+    region_count DESC
+;''')
+
+# รับข้อมูลจากผลลัพธ์ query
+tables4 = [row for row in curs.fetchall()]
+
+# สร้าง DataFrame
+df4 = pd.DataFrame(tables4, columns=['Region ID', 'User Count'])
+
+# รีเซ็ต index และลบหมายเลขแถว
+df4 = df4.reset_index(drop=True)
 
 # การตกแต่งตารางโดยไม่มีเส้นขอบ
 styled_df = df4.style.set_table_styles(
@@ -142,3 +149,5 @@ with col3:
 with col4:
     st.write("Region Distribution")
     st.dataframe(styled_df)
+
+st.rerun()
