@@ -33,7 +33,7 @@ fig1 = px.bar(df,
               title="Total Revenue by Food Type", 
               labels={'total_revenue': 'Total Revenue', 'food_type': 'Food Type'},
               color='food_type',  # แยกสีตามประเภทอาหาร
-              height=400, width=600)
+              height=380, width=800)
 
 # การ query ข้อมูลของเมนูและชั่วโมง
 curs.execute('''SELECT 
@@ -64,7 +64,7 @@ fig2 = px.bar(df2,
               labels={'page_views_count': 'Page Views Count', 'menu_name': 'Food Menu'},
               orientation='h',  # ใช้แท่งแนวนอน
               barmode='stack',  # สะสมสีของแต่ละประเภทอาหาร
-              height=400, width=600)
+              height=380, width=800)
 
 # การ query ข้อมูลจาก Users_2 สำหรับ gender
 curs.execute('''SELECT 
@@ -86,7 +86,7 @@ df3 = pd.DataFrame(tables3, columns=['gender', 'user_count'])
 fig3 = px.pie(df3, 
               names='gender', 
               values='user_count', 
-              hole=0.3,  # กำหนดขนาดของ hole เพื่อให้เป็นโดนัท
+              hole=0.4,  # กำหนดขนาดของ hole เพื่อให้เป็นโดนัท
               title="Gender Distribution")
 
 # การ query ข้อมูลจาก Users_2 สำหรับ region
