@@ -33,7 +33,7 @@ fig1 = px.bar(df,
               title="Total Revenue by Food Type", 
               labels={'total_revenue': 'Total Revenue', 'food_type': 'Food Type'},
               color='food_type',  # แยกสีตามประเภทอาหาร
-              height=500)  # ปรับความสูงให้เหมาะสมกับหน้าจอ widescreen
+              height=400, width=600)
 
 # การ query ข้อมูลของเมนูและชั่วโมง
 curs.execute('''SELECT 
@@ -64,7 +64,7 @@ fig2 = px.bar(df2,
               labels={'page_views_count': 'Page Views Count', 'menu_name': 'Food Menu'},
               orientation='h',  # ใช้แท่งแนวนอน
               barmode='stack',  # สะสมสีของแต่ละประเภทอาหาร
-              height=500)  # ปรับความสูงให้เหมาะสมกับหน้าจอ widescreen
+              height=400, width=600)
 
 # การ query ข้อมูลจาก Users_2 สำหรับ gender
 curs.execute('''SELECT 
@@ -87,8 +87,7 @@ fig3 = px.pie(df3,
               names='gender', 
               values='user_count', 
               hole=0.3,  # กำหนดขนาดของ hole เพื่อให้เป็นโดนัท
-              title="Gender Distribution",
-              height=500)  # ปรับความสูงให้เหมาะสมกับหน้าจอ widescreen
+              title="Gender Distribution")
 
 # การ query ข้อมูลจาก Users_2 สำหรับ region
 curs.execute('''SELECT 
@@ -128,20 +127,20 @@ styled_df = df4.style.set_table_styles(
 )
 
 # การแบ่งคอลัมน์เพื่อแสดงกราฟและตาราง
-col1, col2 = st.columns([3, 2])  # ปรับคอลัมน์ให้คอลัมน์แรกกว้างกว่าคอลัมน์ที่สอง
-col3, col4 = st.columns([3, 2])
+col1, col2 = st.columns(2)
+col3, col4 = st.columns(2)
 
 # แสดงกราฟ 2 เป็นกราฟแรก (ซ้ายบน)
 with col1:
-    st.plotly_chart(fig2, use_container_width=True, height=500)
+    st.plotly_chart(fig2, use_container_width=True, key="fig2")
 
 # แสดงกราฟ 1 ในตำแหน่งขวาบน
 with col2:
-    st.plotly_chart(fig1, use_container_width=True, height=500)
+    st.plotly_chart(fig1, use_container_width=True, key="fig1")
 
 # แสดงกราฟ 3 ในตำแหน่งซ้ายล่าง
 with col3:
-    st.plotly_chart(fig3, use_container_width=True, height=500)
+    st.plotly_chart(fig3, use_container_width=True, key="fig3")
 
 # แสดงตารางในตำแหน่งขวาล่าง
 with col4:
