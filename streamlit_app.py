@@ -10,7 +10,7 @@ conn = connect(host='46.137.234.15', port=8099, path='/query/sql', schema='http'
 curs = conn.cursor()
 
 # ตั้งค่าเวลาในการรีเฟรช
-refresh_interval = st.sidebar.slider("Refresh Interval (seconds)", 5, 60, 10)
+refresh_interval = st.sidebar.slider("Refresh Interval (seconds)", 1, 60, 10)
 
 # สร้างฟังก์ชันในการโหลดข้อมูลใหม่
 def load_data():
@@ -155,4 +155,3 @@ st.dataframe(styled_df)
 if time.time() - st.session_state.get('last_refresh', 0) > refresh_interval:
     st.session_state.data = load_data()  # โหลดข้อมูลใหม่
     st.session_state.last_refresh = time.time()  # อัปเดตเวลารีเฟรช
-
